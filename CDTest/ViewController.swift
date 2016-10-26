@@ -11,12 +11,13 @@ import CoreData
 
 class ViewController: UIViewController {
 
-    var itemidtext = "123"
-    var nametext = "Jones"
-    var amounttext = "53"
-    var fetchedStatsArray = [] as NSArray
+    var itemid = 178
+    var nametext = "Jones3"
+    var amountDouble = 68
+    var inventoryDate: NSDate? = NSDate()
+    var stockStatus = true
+    var fetchedStatsArray: [NSManagedObject] = []
 
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         storeTranscription()
@@ -43,12 +44,14 @@ class ViewController: UIViewController {
         //retrieve the entity that we just created
         let entity =  NSEntityDescription.entity(forEntityName: "ItemList", in: context)
         
-        let transc = NSManagedObject(entity: entity!, insertInto: context)
+        let transc = NSManagedObject(entity: entity!, insertInto: context) as! ItemList
         
         //set the entity values
-        transc.setValue(itemidtext, forKey: "itemID")
-        transc.setValue(nametext, forKey: "productname")
-        transc.setValue(amounttext, forKey: "amount")
+        transc.itemID = Double(itemid)
+        transc.productname = nametext
+        transc.amount = Double(amountDouble)
+        transc.stock = stockStatus
+        transc.invontoryDate = inventoryDate
         
         //save the object
         do {
@@ -68,15 +71,17 @@ class ViewController: UIViewController {
         do {
             //go get the results
             let searchResults = try getContext().fetch(fetchRequest)
-            fetchedStatsArray = searchResults as NSArray
+            fetchedStatsArray = searchResults as [NSManagedObject]
             //I like to check the size of the returned results!
             print ("num of results = \(searchResults.count)")
-            
             //You need to convert to NSManagedObject to use 'for' loops
             for trans in searchResults as [NSManagedObject] {
                 //get the Key Value pairs (although there may be a better way to do that...
-                print("\(trans.value(forKey: "productname"))")
+                print("\(trans.value(forKey: "productname")!)")
+                let mdate = trans.value(forKey: "invontoryDate") as! Date
+                print(mdate)
             }
+
         } catch {
             print("Error with request: \(error)")
         }
@@ -123,22 +128,27 @@ class ViewController: UIViewController {
     }
     
     func createExportString() -> String {
-        var itemIDvar: String?
+        var itemIDvar: NSNumber?
         var productNamevar: String?
-        var amountvar: String?
-        
+        var amountvar: NSNumber?
+        var stockvar: Bool?
+        //var invontoryDatevar: Date?
         
         var export: String = NSLocalizedString("itemID, productName, Amount \n", comment: "")
-        for (index, bidder) in fetchedStatsArray.enumerated() {
+        for (index, itemList) in fetchedStatsArray.enumerated() {
             if index <= fetchedStatsArray.count - 1 {
-                itemIDvar = (bidder as AnyObject).value(forKey: "itemID") as! String?
-                productNamevar = (bidder as AnyObject).value(forKey: "productname") as! String?
-                amountvar = (bidder as AnyObject).value(forKey: "amount") as! String?
-                
+                itemIDvar = itemList.value(forKey: "itemID") as! NSNumber?
+                productNamevar = itemList.value(forKey: "productname") as! String?
+                amountvar = itemList.value(forKey: "amount") as! NSNumber?
+                stockvar = itemList.value(forKey: "stock") as! Bool?
+                //let invontoryDatevar = itemList.value(forKey: "inventoryDate") as! Date
                 let itemIDString = itemIDvar
                 let procductNameSting = productNamevar
                 let amountSting = amountvar
-                export += "\(itemIDString!),\(procductNameSting!),\(amountSting!) \n"
+                let stockSting = stockvar
+                //let invontoryDateSting = invontoryDatevar
+                let invontoryDateSting = Date()
+                export += "\(itemIDString!),\(procductNameSting!),\(stockSting!),\(amountSting!),\(invontoryDateSting) \n"
             }
         }
         print("This is what the app will export: \(export)")
