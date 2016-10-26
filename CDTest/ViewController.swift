@@ -51,7 +51,7 @@ class ViewController: UIViewController {
         transc.productname = nametext
         transc.amount = Double(amountDouble)
         transc.stock = stockStatus
-        transc.invontoryDate = inventoryDate
+        transc.inventoryDate = inventoryDate
         
         //save the object
         do {
@@ -78,7 +78,7 @@ class ViewController: UIViewController {
             for trans in searchResults as [NSManagedObject] {
                 //get the Key Value pairs (although there may be a better way to do that...
                 print("\(trans.value(forKey: "productname")!)")
-                let mdate = trans.value(forKey: "invontoryDate") as! Date
+                let mdate = trans.value(forKey: "inventoryDate") as! Date
                 print(mdate)
             }
 
@@ -132,7 +132,6 @@ class ViewController: UIViewController {
         var productNamevar: String?
         var amountvar: NSNumber?
         var stockvar: Bool?
-        //var invontoryDatevar: Date?
         
         var export: String = NSLocalizedString("itemID, productName, Amount \n", comment: "")
         for (index, itemList) in fetchedStatsArray.enumerated() {
@@ -141,19 +140,19 @@ class ViewController: UIViewController {
                 productNamevar = itemList.value(forKey: "productname") as! String?
                 amountvar = itemList.value(forKey: "amount") as! NSNumber?
                 stockvar = itemList.value(forKey: "stock") as! Bool?
-                //let invontoryDatevar = itemList.value(forKey: "inventoryDate") as! Date
+                let inventoryDatevar = itemList.value(forKey: "inventoryDate") as! Date
                 let itemIDString = itemIDvar
                 let procductNameSting = productNamevar
                 let amountSting = amountvar
                 let stockSting = stockvar
-                //let invontoryDateSting = invontoryDatevar
-                let invontoryDateSting = Date()
-                export += "\(itemIDString!),\(procductNameSting!),\(stockSting!),\(amountSting!),\(invontoryDateSting) \n"
+                let inventoryDateSting = "\(inventoryDatevar)"
+                export += "\(itemIDString!),\(procductNameSting!),\(stockSting!),\(amountSting!),\(inventoryDateSting) \n"
             }
         }
         print("This is what the app will export: \(export)")
         return export
     }
+    
     
     
 }
