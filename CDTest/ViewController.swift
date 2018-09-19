@@ -14,36 +14,26 @@ class ViewController: UIViewController {
     var itemid = 178
     var nametext = "Jones3"
     var amountDouble = 68
-    var inventoryDate: NSDate? = NSDate()
+    var inventoryDate: Date? = Date()
     var stockStatus = true
     var fetchedStatsArray: [NSManagedObject] = []
+    let context = CoreDataStack.context
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        // This add a new record every time the app is run
         storeTranscription()
+        // Loads the current data
         getTranscriptions()
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
     
     @IBAction func exportButton(_ sender: UIButton) {
         exportDatabase()
     }
-
-    func getContext () -> NSManagedObjectContext {
-        let appDelegate = UIApplication.shared.delegate as! AppDelegate
-        return appDelegate.persistentContainer.viewContext
-    }
     
     func storeTranscription() {
-        let context = getContext()
-        
         //retrieve the entity that we just created
         let entity =  NSEntityDescription.entity(forEntityName: "ItemList", in: context)
-        
         let transc = NSManagedObject(entity: entity!, insertInto: context) as! ItemList
         
         //set the entity values
@@ -70,7 +60,7 @@ class ViewController: UIViewController {
         
         do {
             //go get the results
-            let searchResults = try getContext().fetch(fetchRequest)
+            let searchResults = try context.fetch(fetchRequest)
             fetchedStatsArray = searchResults as [NSManagedObject]
             //I like to check the size of the returned results!
             print ("num of results = \(searchResults.count)")
@@ -116,11 +106,11 @@ class ViewController: UIViewController {
                 activityItems: [firstActivityItem], applicationActivities: nil)
             
             activityViewController.excludedActivityTypes = [
-                UIActivityType.assignToContact,
-                UIActivityType.saveToCameraRoll,
-                UIActivityType.postToFlickr,
-                UIActivityType.postToVimeo,
-                UIActivityType.postToTencentWeibo
+                UIActivity.ActivityType.assignToContact,
+                UIActivity.ActivityType.saveToCameraRoll,
+                UIActivity.ActivityType.postToFlickr,
+                UIActivity.ActivityType.postToVimeo,
+                UIActivity.ActivityType.postToTencentWeibo
             ]
             
             self.present(activityViewController, animated: true, completion: nil)
