@@ -1,1 +1,1 @@
-This a complete project to show exporting CSV with Swift 3 and Coredata. 
+This a complete project to show exporting CSV with Swift 4.2 and Coredata. 
